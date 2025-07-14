@@ -1,17 +1,3 @@
-#!/usr/bin/env python3
-"""
-PTT 爬蟲工具 - 重新設計版本
-功能強化：
-- 類別導向設計
-- 更好的錯誤處理
-- 進度條顯示
-- 配置文件支持
-- 命令行界面
-- 並發爬取
-- 數據驗證
-- 自動重試機制
-"""
-
 import requests
 from bs4 import BeautifulSoup
 import re
