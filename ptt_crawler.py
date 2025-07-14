@@ -523,15 +523,15 @@ class PTTCrawlerCLI:
                 self._configure_settings()
             elif choice == '8':
                 self._batch_crawl_latest()
-            elif choice == '9':
-                print("👋 謝謝使用！")
+            elif choice == '9'or choice == 'exit':
+                print("謝謝使用！")
                 return False
             else:
-                print("❌ 無效的選擇，請重新輸入")
+                print("[錯誤] 無效的選擇，請重新輸入")
         except KeyboardInterrupt:
-            print("\n⏹️  操作已取消")
+            print("\n[取消] 操作已取消")
         except Exception as e:
-            print(f"❌ 發生錯誤: {e}")
+            print(f"[錯誤] 發生錯誤: {e}")
         
         return True
     
@@ -541,21 +541,21 @@ class PTTCrawlerCLI:
         
         latest_page = self.crawler.get_latest_page_number(board_name)
         if latest_page <= 0:
-            print("❌ 無法獲取看板信息")
+            print("[錯誤] 無法獲取看板信息")
             return
         
-        print(f"\n📊 {board_name} 看板信息:")
+        print(f"\n[看板] {board_name} 看板信息:")
         print(f"最新頁數: {latest_page}")
         
         articles = self.crawler.extract_articles_from_page(board_name, latest_page)
         
         if articles:
-            print(f"\n📄 最新頁面文章預覽 (共 {len(articles)} 篇):")
+            print(f"\n[預覽] 最新頁面文章預覽 (共 {len(articles)} 篇):")
             print("-" * 80)
             for i, article in enumerate(articles[:10], 1):
                 print(f"{i:2d}. ID: {article['article_id']}")
-                print(f"    📝 {article['title']}")
-                print(f"    👤 {article['author']} | 📅 {article['date']} | 👍 {article['push_preview']}")
+                print(f"    標題: {article['title']}")
+                print(f"    作者: {article['author']} | 日期: {article['date']} | 推文: {article['push_preview']}")
                 print("-" * 80)
         
     def _crawl_pages_range(self):
@@ -567,7 +567,7 @@ class PTTCrawlerCLI:
             end_page = int(input("請輸入結束頁數: "))
             
             if start_page > end_page:
-                print("❌ 起始頁數不能大於結束頁數")
+                print("[錯誤] 起始頁數不能大於結束頁數")
                 return
             
             include_content = input("是否包含完整內容? (y/n): ").lower() == 'y'
@@ -577,14 +577,14 @@ class PTTCrawlerCLI:
             if articles:
                 filename = f"{board_name}-{start_page}-{end_page}.json"
                 filepath = self.crawler.save_articles(articles, filename)
-                print(f"✅ 成功爬取 {len(articles)} 篇文章")
+                print(f"[成功] 成功爬取 {len(articles)} 篇文章")
                 
                 if input("是否也導出為 CSV? (y/n): ").lower() == 'y':
                     csv_file = filename.replace('.json', '.csv')
                     self.crawler.export_to_csv(articles, csv_file)
         
         except ValueError:
-            print("❌ 請輸入有效的數字")
+            print("[錯誤] 請輸入有效的數字")
     
     def _crawl_single_article(self):
         """爬取單篇文章"""
@@ -596,12 +596,12 @@ class PTTCrawlerCLI:
         if article:
             filename = f"{board_name}-{article_id}.json"
             self.crawler.save_articles([article], filename)
-            print(f"✅ 文章爬取成功")
-            print(f"📝 標題: {article.title}")
-            print(f"👤 作者: {article.author}")
-            print(f"👍 推文統計: 推{article.push_count} 噓{article.boo_count} 中性{article.neutral_count}")
+            print(f"[成功] 文章爬取成功")
+            print(f"[標題] {article.title}")
+            print(f"[作者] {article.author}")
+            print(f"[推文統計] 推{article.push_count} 噓{article.boo_count} 中性{article.neutral_count}")
         else:
-            print("❌ 文章爬取失敗")
+            print("[錯誤] 文章爬取失敗")
     
     def _search_articles(self):
         """搜尋文章"""
@@ -612,7 +612,7 @@ class PTTCrawlerCLI:
         found_articles = self.crawler.search_articles(board_name, keyword, max_pages)
         
         if found_articles:
-            print(f"\n🔍 找到 {len(found_articles)} 篇相關文章:")
+            print(f"\n[搜尋結果] 找到 {len(found_articles)} 篇相關文章:")
             for i, article in enumerate(found_articles, 1):
                 print(f"{i}. {article['title']} - {article['author']}")
                 print(f"   ID: {article['article_id']}")
@@ -625,26 +625,26 @@ class PTTCrawlerCLI:
             articles = self.crawler.extract_articles_from_page(board_name, page_num)
             
             if articles:
-                print(f"\n📄 {board_name} 看板第 {page_num} 頁 (共 {len(articles)} 篇):")
+                print(f"\n[看板頁面] {board_name} 看板第 {page_num} 頁 (共 {len(articles)} 篇):")
                 print("-" * 80)
                 for i, article in enumerate(articles, 1):
                     print(f"{i:2d}. ID: {article['article_id']}")
-                    print(f"    📝 {article['title']}")
-                    print(f"    👤 {article['author']} | 📅 {article['date']}")
+                    print(f"    [標題] {article['title']}")
+                    print(f"    [作者] {article['author']} | [日期] {article['date']}")
                     print("-" * 80)
         except ValueError:
-            print("❌ 請輸入有效的頁數")
+            print("[錯誤] 請輸入有效的頁數")
     
     def _convert_json_to_csv(self):
         """轉換 JSON 到 CSV"""
         if not HAS_PANDAS:
-            print("❌ 需要安裝 pandas: pip install pandas")
+            print("[錯誤] 需要安裝 pandas: pip install pandas")
             return
         
         json_file = input("請輸入 JSON 文件路徑: ").strip()
         
         if not os.path.exists(json_file):
-            print("❌ 文件不存在")
+            print("[錯誤] 文件不存在")
             return
         
         try:
@@ -658,11 +658,11 @@ class PTTCrawlerCLI:
             self.crawler.export_to_csv(articles, csv_file)
             
         except Exception as e:
-            print(f"❌ 轉換失敗: {e}")
+            print(f"[錯誤] 轉換失敗: {e}")
     
     def _configure_settings(self):
         """配置設定"""
-        print("\n⚙️  當前設定:")
+        print("\n[設定] 當前設定:")
         print(f"請求間隔: {self.config.delay_between_requests} 秒")
         print(f"頁面間隔: {self.config.delay_between_pages} 秒")
         print(f"並發數: {self.config.max_workers}")
@@ -686,10 +686,10 @@ class PTTCrawlerCLI:
                 
                 # 重新創建 crawler
                 self.crawler = PTTCrawler(self.config)
-                print("✅ 設定已更新")
+                print("[成功] 設定已更新")
                 
             except ValueError:
-                print("❌ 輸入格式錯誤")
+                print("[錯誤] 輸入格式錯誤")
     
     def _batch_crawl_latest(self):
         """批量爬取最新文章"""
@@ -709,11 +709,11 @@ class PTTCrawlerCLI:
                 filename = f"{board_name}_latest_{timestamp}.json"
                 self.crawler.save_articles(articles, filename)
                 
-                print(f"✅ 批量爬取完成，共 {len(articles)} 篇文章")
+                print(f"[成功] 批量爬取完成，共 {len(articles)} 篇文章")
     
     def run(self):
         """運行命令行界面"""
-        print("🚀 歡迎使用 PTT 爬蟲工具!")
+        print("=== PTT 爬蟲工具 ===")
         
         while True:
             try:
@@ -726,7 +726,7 @@ class PTTCrawlerCLI:
                 input("\n按 Enter 繼續...")
                 
             except KeyboardInterrupt:
-                print("\n\n👋 再見!")
+                print("\n\n感謝使用！")
                 break
 
 def main():
