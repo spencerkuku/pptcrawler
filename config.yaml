@@ -1,0 +1,8 @@
+# PTT 爬蟲配置文件
+delay_between_requests: 0.1  # 請求間延遲（秒）
+delay_between_pages: 0.5     # 頁面間延遲（秒）
+timeout: 10                  # 請求超時時間（秒）
+max_retries: 3               # 最大重試次數
+max_workers: 4               # 並發線程數
+output_dir: "./crawled_data" # 輸出目錄
+user_agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"

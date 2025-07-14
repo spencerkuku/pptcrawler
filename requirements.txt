@@ -1,0 +1,6 @@
+# PTT 爬蟲工具依賴包
+requests>=2.25.0
+beautifulsoup4>=4.9.0
+tqdm>=4.60.0          # 進度條顯示
+pandas>=1.3.0         # CSV 導出功能
+PyYAML>=5.4.0         # 配置文件支持
